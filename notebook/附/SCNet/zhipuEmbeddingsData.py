@@ -108,4 +108,4 @@ def splitDocuments(file_path, texts):
 
 
 if __name__ == "__main__":
-    get_file_paths("E:/ai/llm-universe/data_base/test")
+    get_file_paths("E:/ai/llm-universe/data_base/data")
