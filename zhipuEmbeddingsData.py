@@ -1,4 +1,6 @@
 import os
+os.environ["USER_AGENT"] = "MyRAGApp/1.0 (https://myapp.example.com; myemail@example.com)"
+os.environ["CHROMA_TELEMETRY_DISABLED"] = "true"
 from zhipuai import ZhipuAI
 from dotenv import load_dotenv, find_dotenv
 from langchain_community.document_loaders import (
@@ -16,7 +18,7 @@ from langchain_community.vectorstores import Chroma
 
 def dataLoadToVectordb(texts):
     embedding = ZhipuAiEmbeddings()
-    persist_directory = 'data_base/vector_db/testchroma'
+    persist_directory = 'E:/ai/llm-universe/data_base/vector_db/chroma'
     vectordb = Chroma.from_documents(
         documents=texts,
         embedding=embedding,
@@ -113,4 +115,4 @@ def splitDocuments(file_path, texts):
 
 
 if __name__ == "__main__":
-    get_file_paths("data_base/data")
+    get_file_paths("E:/ai/llm-universe/data_base/data")

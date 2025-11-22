@@ -1,11 +1,10 @@
 import os
+os.environ["CHROMA_TELEMETRY_DISABLED"] = "true"
 from dotenv import load_dotenv, find_dotenv
 from zhipuLLM import ZhipuaiLLM
 from zhipuEmbedding import ZhipuAiEmbeddings
-from langchain_core.runnables import RunnableLambda
 from langchain_community.vectorstores import Chroma
-from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnablePassthrough, RunnableParallel
+from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableBranch
@@ -20,17 +19,6 @@ api_key=os.environ["ZHIPUAI_API_KEY"]
 def combine_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs["context"])
 
-'''
-def get_completion(prompt, model="glm-4-plus", temperature=1):
-    messages = [{"role": "user", "content": prompt}]
-    res = client.chat.completions.create(
-        model=model, messages=messages, temperature=temperature
-    )
-    if len(res.choices) > 0:
-        print(res.choices[0].message.content)
-        return res.choices[0].message.content
-    return "generate answer error"
-'''
 
 def show_switch_status(switch_state):
     return switch_state
@@ -43,40 +31,6 @@ def format_chat_history(chatbot):
         formatted_history.append(("human", human_msg))
         formatted_history.append(("ai", ai_msg))
     return formatted_history
-'''
-#整合带有历史信息记录的promt
-def get_history_promt(retriever, llm):
-
-    #获取得到向量库
-    vectordb = Chroma(
-        persist_directory='E:/ai/llm-universe/data_base/vector_db/testchroma',  # 允许我们将persist_directory目录保存到磁盘上
-        embedding_function=ZhipuAiEmbeddings()
-    )
-    #取数据
-    retriever = vectordb.as_retriever(search_kwargs={"k": 2})
-
-    
-    # 压缩问题的系统 prompt
-    condense_question_system_template = (
-        "请根据聊天记录完善用户最新的问题，"
-        "如果用户最新的问题不需要完善则返回用户的问题。"
-        )
-    # 构造 压缩问题的 prompt template
-    condense_question_prompt = ChatPromptTemplate([
-            ("system", condense_question_system_template),
-            ("placeholder", "{chat_history}"),
-            ("human", "{input}"),
-        ])
-    
-    retrieve_docs = RunnableBranch(
-    # 分支 1: 若聊天记录中没有 chat_history 则直接使用用户问题查询向量数据库
-    (lambda x: not x.get("chat_history", False), (lambda x: x["input"]) | retriever, ),
-    # 分支 2 : 若聊天记录中有 chat_history 则先让 llm 根据聊天记录完善问题再查询向量数据库
-    condense_question_prompt | llm | StrOutputParser() | retriever,
-    )
-
-    return retrieve_docs
-'''
 
 def chatbot_response(input, chatbot, isUseRAG):
     """根据开关状态返回提示信息"""
@@ -112,11 +66,11 @@ def chatbot_response(input, chatbot, isUseRAG):
         #
         #获取得到向量库
         vectordb = Chroma(
-            persist_directory='E:/ai/llm-universe/data_base/vector_db/testchroma',  # 允许我们将persist_directory目录保存到磁盘上
+            persist_directory='E:/ai/llm-universe/data_base/vector_db/chroma',  # 允许我们将persist_directory目录保存到磁盘上
             embedding_function=ZhipuAiEmbeddings()
         )
         #取数据
-        retriever = vectordb.as_retriever(search_kwargs={"k": 2})
+        retriever = vectordb.as_retriever(search_kwargs={"k": 1})
 
         
         # 压缩问题的系统 prompt
@@ -147,27 +101,7 @@ def chatbot_response(input, chatbot, isUseRAG):
             "input": input,
             "chat_history": format_chat_history(chatbot)
         })
-        #
 
-        '''
-        #构建链
-        template = """使用以下上下文来回答最后的问题。如果你不知道答案，就说你不知道，不要试图编造答
-        案。最多使用三句话。尽量使答案简明扼要。请你在回答的最后说“谢谢你的提问！”。
-        {context}
-        问题: {input}
-        """
-        # 将template通过 PromptTemplate 转为可以在LCEL中使用的类型
-        prompt = PromptTemplate(template=template)
-
-        qa_chain = (
-            RunnableParallel({"context": retrieval_chain, "input": RunnablePassthrough()})
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
-
-        result = qa_chain.invoke(input)
-        '''
         print(result)
         chatbot.append((input,result["answer"]))
         return [chatbot,input]
@@ -214,7 +148,6 @@ with gr.Blocks() as demo:
 
 if __name__ == "__main__":
     demo.launch(
-        server_name="0.0.0.0",
         share=False,
         show_error=True,  # 显示错误信息（调试用）
     )
