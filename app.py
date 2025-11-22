@@ -66,7 +66,7 @@ def chatbot_response(input, chatbot, isUseRAG):
         #
         #获取得到向量库
         vectordb = Chroma(
-            persist_directory='E:/ai/llm-universe/data_base/vector_db/chroma',  # 允许我们将persist_directory目录保存到磁盘上
+            persist_directory='data_base/vector_db/chroma',  # 允许我们将persist_directory目录保存到磁盘上
             embedding_function=ZhipuAiEmbeddings()
         )
         #取数据

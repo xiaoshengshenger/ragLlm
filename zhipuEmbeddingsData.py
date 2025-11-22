@@ -18,7 +18,7 @@ from langchain_community.vectorstores import Chroma
 
 def dataLoadToVectordb(texts):
     embedding = ZhipuAiEmbeddings()
-    persist_directory = 'E:/ai/llm-universe/data_base/vector_db/chroma'
+    persist_directory = 'data_base/vector_db/chroma'
     vectordb = Chroma.from_documents(
         documents=texts,
         embedding=embedding,
@@ -115,4 +115,4 @@ def splitDocuments(file_path, texts):
 
 
 if __name__ == "__main__":
-    get_file_paths("E:/ai/llm-universe/data_base/data")
+    get_file_paths("data_base/data")
