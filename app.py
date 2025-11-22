@@ -187,7 +187,6 @@ with gr.Blocks() as demo:
     chatbot = gr.Chatbot(
         label="对话历史",
         height=500,  # 对话框高度
-        bubble_full_width=False,  # 气泡不占满宽度（更美观）
         avatar_images=(None, "https://gradio.s3-us-west-2.amazonaws.com/guides/robot.png")  # （可选）用户/机器人头像
     )
 
