@@ -16,7 +16,7 @@ from langchain_community.vectorstores import Chroma
 
 def dataLoadToVectordb(texts):
     embedding = ZhipuAiEmbeddings()
-    persist_directory = 'E:/ai/llm-universe/data_base/vector_db/testchroma'
+    persist_directory = 'data_base/vector_db/testchroma'
     vectordb = Chroma.from_documents(
         documents=texts,
         embedding=embedding,
@@ -26,7 +26,13 @@ def dataLoadToVectordb(texts):
     return 
 
 def get_file_paths(folder_path):
-    #1.获取所有文件
+    current_dir = os.getcwd()
+    abs_folder_path = os.path.abspath(folder_path)
+    print(f"当前工作目录：{current_dir}")
+    print(f"目标文件夹绝对路径：{abs_folder_path}")
+    print(f"目标路径是否存在：{os.path.exists(abs_folder_path)}")
+    print(f"目标路径是否是文件夹：{os.path.isdir(abs_folder_path)}")
+    # 1.获取所有文件
     file_paths = []
     for root, dirs, files in os.walk(folder_path):
         for file in files:
@@ -60,7 +66,6 @@ def get_file_paths(folder_path):
     #print(f"切分后的字符数（可以用来大致评估 token 数）：{sum([len(doc.page_content) for doc in docs])}")
 
     #dataLoadToVectordb(docs)
-    all_embeddding = []
     for i in range(0,len(docs),64):
         input_embeddings = docs[i : i + 64]
        #input_embeddings = [text.strip() for text in input_embeddings if text.strip()]
@@ -108,4 +113,4 @@ def splitDocuments(file_path, texts):
 
 
 if __name__ == "__main__":
-    get_file_paths("E:/ai/llm-universe/data_base/data")
+    get_file_paths("data_base/data")
