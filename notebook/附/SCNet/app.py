@@ -215,10 +215,9 @@ with gr.Blocks() as demo:
 
 if __name__ == "__main__":
     demo.launch(
-        server_port=7861,
-        server_name="127.0.0.1",
+        server_name="0.0.0.0",
         share=False,
-        show_error=True  # 显示错误信息（调试用）
+        show_error=True,  # 显示错误信息（调试用）
     )
 
     
