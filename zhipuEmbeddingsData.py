@@ -25,22 +25,14 @@ def dataLoadToVectordb(texts):
         persist_directory=persist_directory
     )
     print(f"向量库中存储的数量：{vectordb._collection.count()}")
-    return 
+    """
+    if vectordb._collection.count()>1:
+        return True
+    else:
+        return False
+    """
 
-def get_file_paths(folder_path):
-    current_dir = os.getcwd()
-    abs_folder_path = os.path.abspath(folder_path)
-    print(f"当前工作目录：{current_dir}")
-    print(f"目标文件夹绝对路径：{abs_folder_path}")
-    print(f"目标路径是否存在：{os.path.exists(abs_folder_path)}")
-    print(f"目标路径是否是文件夹：{os.path.isdir(abs_folder_path)}")
-    # 1.获取所有文件
-    file_paths = []
-    for root, dirs, files in os.walk(folder_path):
-        for file in files:
-            file_path = os.path.join(root, file)
-            file_paths.append(file_path)
-    print(file_paths[:3])
+def get_file_paths_data(file_paths):
 
     # 下载所有文件并存储到text
     texts = []
@@ -112,7 +104,24 @@ def splitDocuments(file_path, texts):
 
         texts.extend(loader.load())
 
+def get_path_files(folder_path):
+    current_dir = os.getcwd()
+    abs_folder_path = os.path.abspath(folder_path)
+    print(f"当前工作目录：{current_dir}")
+    print(f"目标文件夹绝对路径：{abs_folder_path}")
+    print(f"目标路径是否存在：{os.path.exists(abs_folder_path)}")
+    print(f"目标路径是否是文件夹：{os.path.isdir(abs_folder_path)}")
+    # 1.获取所有文件
+    file_paths = []
+    for root, dirs, files in os.walk(folder_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            file_paths.append(file_path)
+    print(file_paths[:3])
+    return file_paths
 
 
 if __name__ == "__main__":
-    get_file_paths("data_base/data")
+    paths = "data_base/data"
+    file_paths = get_path_files(paths)
+    get_file_paths_data(file_paths)
